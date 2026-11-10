@@ -1,0 +1,71 @@
+# Ambiente local completo: banco, "AWS falsa", API e worker.
+# Subir:   docker compose up --build
+# Derrubar e apagar dados: docker compose down -v
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: auditor
+      POSTGRES_PASSWORD: auditor
+      POSTGRES_DB: auditor_nfe
+    ports:
+      # Porta no host configurável: outros projetos já usam a 5432.
+      - "${POSTGRES_HOST_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Aplica a migração na PRIMEIRA subida (volume vazio).
+      # Só o arquivo .up: o .down apagaria as tabelas.
+      - ./api/db/migrations/0001_init.up.sql:/docker-entrypoint-initdb.d/0001_init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U auditor -d auditor_nfe"]
+      interval: 3s
+      retries: 20
+
+  # Emula S3 e SQS localmente, sem custo e sem conta AWS.
+  # Fixado na 4.14: as versões a partir de março/2026 exigem conta e
+  # LOCALSTACK_AUTH_TOKEN. Ver docs/06-decisoes-tecnicas.md.
+  localstack:
+    image: localstack/localstack:4.14
+    environment:
+      SERVICES: s3,sqs
+      AWS_DEFAULT_REGION: us-east-1
+    ports:
+      - "4566:4566"
+    volumes:
+      - ./infra/localstack/init-aws.sh:/etc/localstack/init/ready.d/init-aws.sh:ro
+    healthcheck:
+      # Só fica "healthy" depois que o script de init criou a fila.
+      test: ["CMD-SHELL", "awslocal sqs get-queue-url --queue-name auditor-nfe-auditorias"]
+      interval: 3s
+      retries: 30
+
+  api:
+    build: ./api
+    environment: &aws-local
+      DATABASE_URL: postgres://auditor:auditor@postgres:5432/auditor_nfe?sslmode=disable
+      AWS_REGION: us-east-1
+      AWS_ENDPOINT_URL: http://localstack:4566
+      AWS_ACCESS_KEY_ID: test          # credenciais falsas aceitas pelo LocalStack
+      AWS_SECRET_ACCESS_KEY: test
+      S3_BUCKET: auditor-nfe-xmls
+      SQS_QUEUE_URL: http://localstack:4566/000000000000/auditor-nfe-auditorias
+    ports:
+      - "${API_HOST_PORT:-8080}:8080"
+    depends_on:
+      postgres: { condition: service_healthy }
+      localstack: { condition: service_healthy }
+
+  worker:
+    build: ./worker
+    environment:
+      <<: *aws-local
+      DATABASE_URL: postgresql://auditor:auditor@postgres:5432/auditor_nfe
+      LLM_HABILITADO: ${LLM_HABILITADO:-false}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+    depends_on:
+      postgres: { condition: service_healthy }
+      localstack: { condition: service_healthy }
+
+volumes:
+  pgdata:

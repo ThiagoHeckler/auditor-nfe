@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS achados;
+DROP TABLE IF EXISTS notas;

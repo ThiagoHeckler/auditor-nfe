@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- NF-e FICTÍCIA com erros de propósito, para demonstrar a auditoria:
+     - item 1: CFOP 6102 (interestadual) numa nota interna (idDest=1)  -> R002
+     - item 2: CFOP 1102 (entrada) numa nota de saída (tpNF=1)         -> R003
+     - item 2: NCM genérico 00000000                                   -> R004 (ALERTA)
+     - total de produtos não bate com a soma dos itens                 -> R005 -->
+<nfeProc xmlns="http://www.portalfiscal.inf.br/nfe" versao="4.00">
+  <NFe>
+    <infNFe Id="NFe42251011222333000181550010000012351000012350" versao="4.00">
+      <ide>
+        <cUF>42</cUF>
+        <natOp>Venda de mercadoria</natOp>
+        <mod>55</mod>
+        <serie>1</serie>
+        <nNF>1235</nNF>
+        <tpNF>1</tpNF>
+        <idDest>1</idDest>
+      </ide>
+      <emit>
+        <CNPJ>11222333000181</CNPJ>
+        <xNome>Empresa Exemplo Ltda</xNome>
+        <enderEmit><xMun>Sao Miguel do Oeste</xMun><UF>SC</UF></enderEmit>
+      </emit>
+      <dest>
+        <CNPJ>11444777000161</CNPJ>
+        <xNome>Cliente Exemplo SA</xNome>
+        <enderDest><xMun>Chapeco</xMun><UF>SC</UF></enderDest>
+      </dest>
+      <det nItem="1">
+        <prod>
+          <cProd>001</cProd>
+          <xProd>Parafuso sextavado</xProd>
+          <NCM>73181500</NCM>
+          <CFOP>6102</CFOP>
+          <vProd>150.00</vProd>
+        </prod>
+      </det>
+      <det nItem="2">
+        <prod>
+          <cProd>099</cProd>
+          <xProd>Kit diversos</xProd>
+          <NCM>00000000</NCM>
+          <CFOP>1102</CFOP>
+          <vProd>80.00</vProd>
+        </prod>
+      </det>
+      <total>
+        <ICMSTot><vProd>200.00</vProd></ICMSTot>
+      </total>
+    </infNFe>
+  </NFe>
+</nfeProc>

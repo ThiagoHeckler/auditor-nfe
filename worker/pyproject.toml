@@ -1,0 +1,16 @@
+[project]
+name = "auditor-nfe-worker"
+version = "0.1.0"
+description = "Worker que audita XMLs de NF-e com regras fiscais e LangGraph"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]

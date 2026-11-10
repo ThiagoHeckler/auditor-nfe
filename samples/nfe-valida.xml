@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- NF-e FICTÍCIA para testes (dados inventados, só a estrutura segue o layout 4.00).
+     Venda interna em SC, sem problemas: a auditoria deve retornar zero achados. -->
+<nfeProc xmlns="http://www.portalfiscal.inf.br/nfe" versao="4.00">
+  <NFe>
+    <infNFe Id="NFe42251011222333000181550010000012341000012344" versao="4.00">
+      <ide>
+        <cUF>42</cUF>
+        <natOp>Venda de mercadoria</natOp>
+        <mod>55</mod>
+        <serie>1</serie>
+        <nNF>1234</nNF>
+        <tpNF>1</tpNF>
+        <idDest>1</idDest>
+      </ide>
+      <emit>
+        <CNPJ>11222333000181</CNPJ>
+        <xNome>Empresa Exemplo Ltda</xNome>
+        <enderEmit><xMun>Sao Miguel do Oeste</xMun><UF>SC</UF></enderEmit>
+      </emit>
+      <dest>
+        <CNPJ>11444777000161</CNPJ>
+        <xNome>Cliente Exemplo SA</xNome>
+        <enderDest><xMun>Chapeco</xMun><UF>SC</UF></enderDest>
+      </dest>
+      <det nItem="1">
+        <prod>
+          <cProd>001</cProd>
+          <xProd>Parafuso sextavado</xProd>
+          <NCM>73181500</NCM>
+          <CFOP>5102</CFOP>
+          <vProd>150.00</vProd>
+        </prod>
+      </det>
+      <det nItem="2">
+        <prod>
+          <cProd>002</cProd>
+          <xProd>Arruela lisa</xProd>
+          <NCM>73182200</NCM>
+          <CFOP>5102</CFOP>
+          <vProd>49.90</vProd>
+        </prod>
+      </det>
+      <total>
+        <ICMSTot><vProd>199.90</vProd></ICMSTot>
+      </total>
+    </infNFe>
+  </NFe>
+</nfeProc>
